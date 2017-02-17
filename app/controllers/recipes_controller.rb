@@ -1,4 +1,6 @@
-class RecipesController < ApplicationController
+# frozen_string_literal: true
+# :nodoc:
+class RecipesController < OpenReadController
   before_action :set_recipe, only: [:show, :update, :destroy]
 
   # GET /recipes
