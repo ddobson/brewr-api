@@ -1,19 +1,39 @@
 # frozen_string_literal: true
-# This file should contain all the record creation needed to experiment with
-# your app during development.
-#
-# The data can then be loaded with the rake db:examples (or created alongside
-# the db with db:nuke_pave).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+1.times do
+  @user = User.find_by(email: 'example_data@brewr.com')
+  next if @user
+  User.create!(email: 'example_data@brewr.com',
+               password: 'pass',
+               password_confirmation: 'pass')
+end
 
-# %w(antony jeff matt jason).each do |name|
-#   email = "#{name}@#{name}.com"
-#   next if User.exists? email: email
-#   User.create!(email: email,
-#                password: 'abc123',
-#                password_confirmation: nil)
-# end
+%w(IPA Lager Stout Porter Ale).each do |name|
+  recipe_params = {
+    name: name,
+    user_id: User.first.id,
+    instructions: 'make beer',
+    summary: 'it\'s a beer',
+    original_gravity: 1.011,
+    final_gravity: 1.049,
+    abv: 5.2,
+    ibu: 19,
+    srm: 30
+  }
+
+  next if Recipe.exists?(name: name)
+  Recipe.create! recipe_params
+end
+
+%w(water hops malt grain yeast sugar).each do |ingredient|
+  next if Ingredient.find_by(name: ingredient)
+  Ingredient.create(name: ingredient, unit: 'some unit')
+end
+
+Recipe.all.each do |recipe|
+  next unless recipe.ingredients.empty?
+  Ingredient.all.each do |ingredient|
+    RecipeIngredient.create(recipe: recipe,
+                            ingredient: ingredient,
+                            quantity: 10)
+  end
+end
