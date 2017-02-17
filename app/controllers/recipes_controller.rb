@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # :nodoc:
 class RecipesController < OpenReadController
-  before_action :set_recipe, only: [:show, :update, :destroy]
+  before_action :set_recipe, only: [:update, :destroy]
 
   # GET /recipes
   def index
@@ -12,12 +12,12 @@ class RecipesController < OpenReadController
 
   # GET /recipes/1
   def show
-    render json: @recipe
+    render json: Recipe.find(params[:id])
   end
 
   # POST /recipes
   def create
-    @recipe = Recipe.new(recipe_params)
+    @recipe = current_user.recipes.build(recipe_params)
 
     if @recipe.save
       render json: @recipe, status: :created
@@ -42,13 +42,12 @@ class RecipesController < OpenReadController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_recipe
-    @recipe = Recipe.find(params[:id])
+    @recipe = current_user.recipes.find(params[:id])
   end
 
   # Only allow a trusted parameter "white list" through.
   def recipe_params
     params.require(:recipe).permit(:name,
-                                   :user_id,
                                    :instructions,
                                    :ingredients,
                                    :summary,
