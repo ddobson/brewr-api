@@ -19,115 +19,119 @@ require 'rails_helper'
 # that an instance is receiving a specific message.
 
 RSpec.describe RecipesController, type: :controller do
-
-  # This should return the minimal set of attributes required to create a valid
-  # Recipe. As you add validations to Recipe, be sure to
-  # adjust the attributes here as well.
-  let(:valid_attributes) {
-    skip('Add a hash of attributes valid for your model')
-  }
-
-  let(:invalid_attributes) {
-    skip('Add a hash of attributes invalid for your model')
-  }
-
-  # This should return the minimal set of values that should be in the session
-  # in order to pass any filters (e.g. authentication) defined in
-  # RecipesController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
-
-  describe 'GET #index' do
-    it 'assigns all recipes as @recipes' do
-      recipe = Recipe.create! valid_attributes
-      get :index, params: {}, session: valid_session
-      expect(assigns(:recipes)).to eq([recipe])
-    end
+  def user_params
+    {
+      email: 'beer@example.com',
+      password: 'foobarbaz',
+      password_confirmation: 'foobarbaz'
+    }
   end
 
-  describe 'GET #show' do
-    it 'assigns the requested recipe as @recipe' do
-      recipe = Recipe.create! valid_attributes
-      get :show, params: {id: recipe.to_param}, session: valid_session
-      expect(assigns(:recipe)).to eq(recipe)
-    end
+  def recipe_params
+    {
+      name: 'Kick ass stout',
+      user_id: user.id,
+      instructions: 'make beer',
+      ingredients: 'water and some other stuff',
+      summary: 'it\'s a beer',
+      original_gravity: 1.014,
+      final_gravity: 1.103,
+      abv: 4.9,
+      ibu: 18,
+      srm: 39
+    }
   end
 
-  describe 'POST #create' do
-    context 'with valid params' do
-      it 'creates a new Recipe' do
-        expect {
-          post :create, params: {recipe: valid_attributes}, session: valid_session
-        }.to change(Recipe, :count).by(1)
+  def user
+    User.first
+  end
+
+  def recipe
+    Recipe.first
+  end
+
+  before(:all) do
+    User.create! user_params
+  end
+
+  before(:all) do
+    Recipe.create! recipe_params
+  end
+
+  after(:all) do
+    User.destroy_all
+  end
+
+  # after(:all) do
+  #   Recipe.destroy_all
+  # end
+
+  ### BEGIN TEST DEFINITIONS ###
+
+  context 'when not authenticated' do
+    describe 'GET #index' do
+      before(:each) do
+        get :index
       end
 
-      it 'assigns a newly created recipe as @recipe' do
-        post :create, params: {recipe: valid_attributes}, session: valid_session
-        expect(assigns(:recipe)).to be_a(Recipe)
-        expect(assigns(:recipe)).to be_persisted
+      it 'is a successful request' do
+        expect(response.status).to eq(200)
+        expect(response).to be_successful
       end
 
-      it 'redirects to the created recipe' do
-        post :create, params: {recipe: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(Recipe.last)
+      it 'fetches a collection of recipes' do
+        recipes_response = JSON.parse response.body
+        expect(recipes_response.length).to eq(Recipe.all.length)
+        expect(recipes_response['recipes'].first['name']).to eq(recipe.name)
       end
     end
 
-    context 'with invalid params' do
-      it 'assigns a newly created but unsaved recipe as @recipe' do
-        post :create, params: {recipe: invalid_attributes}, session: valid_session
-        expect(assigns(:recipe)).to be_a_new(Recipe)
+    describe 'GET show' do
+      before(:each) { get :show, id: recipe.id }
+
+      it 'is successful' do
+        expect(response.status).to eq(200)
+      end
+
+      it 'renders a JSON response' do
+        recipe_response = JSON.parse(response.body)
+        expect(recipe_response).not_to be_nil
+      end
+
+      it 'has the correct content' do
+        recipe_response = JSON.parse(response.body)
+        expect(recipe_response['recipe']['id']).to eq(recipe.id)
+        expect(recipe_response['recipe']['name']).to eq(recipe.name)
+      end
+    end
+
+    describe 'POST create' do
+      def new_recipe
+        {
+          name: 'World changing ale',
+          user_id: user.id,
+          instructions: 'make beer',
+          ingredients: 'water and some other stuff',
+          summary: 'it\'s a beer',
+          original_gravity: 1.014,
+          final_gravity: 1.103,
+          abv: 5.9,
+          ibu: 40,
+          srm: 29
+        }
+      end
+
+      before(:each) do
+        post :create, params: { recipe: new_recipe }, format: :json
+      end
+
+      it 'is not successful' do
+        expect(response).not_to be_successful
+      end
+
+      it 'cites that authentication is required' do
+        expect(response.body.strip).to eq('HTTP Token: Access denied.')
       end
     end
   end
-
-  describe 'PATCH #update' do
-    context 'with valid params' do
-      let(:new_attributes) {
-        skip('Add a hash of attributes valid for your model')
-      }
-
-      it 'updates the requested recipe' do
-        recipe = Recipe.create! valid_attributes
-        patch :update, params: {id: recipe.to_param, recipe: new_attributes}, session: valid_session
-        recipe.reload
-        skip('Add assertions for updated state')
-      end
-
-      it 'assigns the requested recipe as @recipe' do
-        recipe = Recipe.create! valid_attributes
-        patch :update, params: {id: recipe.to_param, recipe: valid_attributes}, session: valid_session
-        expect(assigns(:recipe)).to eq(recipe)
-      end
-
-      it 'redirects to the recipe' do
-        recipe = Recipe.create! valid_attributes
-        patch :update, params: {id: recipe.to_param, recipe: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(recipe)
-      end
-    end
-
-    context 'with invalid params' do
-      it 'assigns the recipe as @recipe' do
-        recipe = Recipe.create! valid_attributes
-        patch :update, params: {id: recipe.to_param, recipe: invalid_attributes}, session: valid_session
-        expect(assigns(:recipe)).to eq(recipe)
-      end
-    end
-  end
-
-  describe 'DELETE #destroy' do
-    it 'destroys the requested recipe' do
-      recipe = Recipe.create! valid_attributes
-      expect {
-        delete :destroy, params: {id: recipe.to_param}, session: valid_session
-      }.to change(Recipe, :count).by(-1)
-    end
-
-    it 'redirects to the recipes list' do
-      recipe = Recipe.create! valid_attributes
-      delete :destroy, params: {id: recipe.to_param}, session: valid_session
-      expect(response).to redirect_to(recipes_url)
-    end
-  end
-
 end
