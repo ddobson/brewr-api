@@ -18,8 +18,13 @@ class RecipesController < OpenReadController
   # POST /recipes
   def create
     @recipe = current_user.recipes.build(recipe_params)
+    # @recipe.recipe_ingredients
+    #        .build
+    #        .build_ingredient
 
-    if @recipe.save
+    build_recipe_ingredients
+
+    if @recipe.save!
       render json: @recipe, status: :created
     else
       render json: @recipe.errors, status: :unprocessable_entity
@@ -45,16 +50,32 @@ class RecipesController < OpenReadController
     @recipe = current_user.recipes.find(params[:id])
   end
 
+  def build_recipe_ingredients
+    @recipe.recipe_ingredients.each do |recipe_ingredient|
+      recipe_ingredient
+        .ingredient = Ingredient.find_or_create_by(name: recipe_ingredient.ingredient.name) do |ingredient|
+          ingredient.unit = recipe_ingredient.ingredient.unit
+        end
+    end
+  end
+
   # Only allow a trusted parameter "white list" through.
   def recipe_params
-    params.require(:recipe).permit(:name,
-                                   :instructions,
-                                   :summary,
-                                   :original_gravity,
-                                   :final_gravity,
-                                   :abv,
-                                   :ibu,
-                                   :srm)
+    params.require(:recipe)
+          .permit(:name,
+                  :user_id,
+                  :instructions,
+                  :summary,
+                  :original_gravity,
+                  :final_gravity,
+                  :abv,
+                  :ibu,
+                  :srm,
+                  recipe_ingredients_attributes: [:quantity,
+                                                  ingredient_attributes: [
+                                                    :name,
+                                                    :unit
+                                                  ]])
   end
 
   private :set_recipe, :recipe_params

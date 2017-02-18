@@ -10,7 +10,22 @@ curl "${API}${URL_PATH}" \
       "name": "'"${NAME}"'",
       "user_id": 1,
       "instructions": "do stuff",
-      "ingredients": "water and other things",
+      "recipe_ingredients_attributes": [
+        {
+          "quantity": 5.0,
+          "ingredient_attributes": {
+            "name": "oatmeal",
+            "unit": "ounce"
+          }
+        },
+        {
+          "quantity": 6.0,
+          "ingredient_attributes": {
+            "name": "super malt extract",
+            "unit": "ounce"
+          }
+        }
+      ],
       "summary": "A fucking beer",
       "original_gravity": 1.013,
       "final_gravity": 1.104,
