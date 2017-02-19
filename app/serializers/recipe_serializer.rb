@@ -5,13 +5,14 @@ class RecipeSerializer < ActiveModel::Serializer
              :name,
              :user,
              :instructions,
-             :ingredients,
              :summary,
              :original_gravity,
              :final_gravity,
              :abv,
              :ibu,
              :srm
+
+  has_many :recipe_ingredients, key: 'ingredients'
 
   def user
     object.user.id
