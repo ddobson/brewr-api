@@ -8,11 +8,15 @@
 end
 
 %w(IPA Lager Stout Porter Ale).each do |name|
+  summary = 'It\'s a beer. Lorem ipsum dolor sit amet, consectetur adipiscing
+             elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+             aliqua. Ut enim ad minim veniam, quis nosrud exercitation ullamco.'
+
   recipe_params = {
-    name: name,
+    name: "Amazing #{name}",
     user_id: User.first.id,
     instructions: 'make beer',
-    summary: 'it\'s a beer',
+    summary: summary,
     original_gravity: 1.011,
     final_gravity: 1.049,
     abv: 5.2,
