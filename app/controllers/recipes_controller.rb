@@ -71,6 +71,7 @@ class RecipesController < OpenReadController
                   :abv,
                   :ibu,
                   :srm,
+                  :image_url,
                   recipe_ingredients_attributes: [:quantity,
                                                   ingredient_attributes: [
                                                     :name,

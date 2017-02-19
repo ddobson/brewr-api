@@ -21,7 +21,8 @@ end
     final_gravity: 1.049,
     abv: 5.2,
     ibu: 19,
-    srm: 30
+    srm: 30,
+    image_url: 'http://i.imgur.com/PKDP9QO.jpg'
   }
 
   next if Recipe.exists?(name: name)

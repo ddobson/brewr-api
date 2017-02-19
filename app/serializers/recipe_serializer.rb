@@ -10,7 +10,8 @@ class RecipeSerializer < ActiveModel::Serializer
              :final_gravity,
              :abv,
              :ibu,
-             :srm
+             :srm,
+             :image_url
 
   has_many :recipe_ingredients, key: 'ingredients'
 

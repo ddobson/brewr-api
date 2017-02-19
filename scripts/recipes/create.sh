@@ -31,7 +31,8 @@ curl "${API}${URL_PATH}" \
       "final_gravity": 1.104,
       "abv": 5.4,
       "ibu": 50,
-      "srm": 17
+      "srm": 17,
+      "image_url": "http://i.imgur.com/PKDP9QO.jpg"
     }
   }'
 
