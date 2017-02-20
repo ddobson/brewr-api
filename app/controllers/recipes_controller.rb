@@ -5,22 +5,29 @@ class RecipesController < OpenReadController
 
   # GET /recipes
   def index
-    @recipes = Recipe.all
+    @recipes = if current_user
+                 current_user.recipes.all
+               else
+                 Recipe.all
+               end
 
     render json: @recipes
   end
 
-  # GET /recipes/1
+  # GET /recipes/:id
   def show
-    render json: Recipe.find(params[:id])
+    @recipe = Recipe.find(params[:id])
+
+    if @recipe
+      render json: @recipe
+    else
+      head status: :not_found
+    end
   end
 
   # POST /recipes
   def create
     @recipe = current_user.recipes.build(recipe_params)
-    # @recipe.recipe_ingredients
-    #        .build
-    #        .build_ingredient
 
     build_recipe_ingredients
 
@@ -31,7 +38,7 @@ class RecipesController < OpenReadController
     end
   end
 
-  # PATCH/PUT /recipes/1
+  # PATCH/PUT /recipes/:id
   def update
     if @recipe.update(recipe_params)
       head :no_content
@@ -40,7 +47,7 @@ class RecipesController < OpenReadController
     end
   end
 
-  # DELETE /recipes/1
+  # DELETE /recipes/:id
   def destroy
     @recipe.destroy
   end
