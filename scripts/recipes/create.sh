@@ -8,7 +8,6 @@ curl "${API}${URL_PATH}" \
   --data '{
     "recipe": {
       "name": "'"${NAME}"'",
-      "user_id": 1,
       "instructions": "do stuff",
       "recipe_ingredients_attributes": [
         {

@@ -63,7 +63,6 @@ class RecipesController < OpenReadController
   def recipe_params
     params.require(:recipe)
           .permit(:name,
-                  :user_id,
                   :instructions,
                   :summary,
                   :original_gravity,
