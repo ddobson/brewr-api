@@ -5,11 +5,7 @@ class RecipesController < OpenReadController
 
   # GET /recipes
   def index
-    @recipes = if current_user
-                 current_user.recipes.all
-               else
-                 Recipe.all
-               end
+    @recipes = Recipe.all
 
     render json: @recipes
   end
@@ -23,6 +19,13 @@ class RecipesController < OpenReadController
     else
       head status: :not_found
     end
+  end
+
+  # GET /recipes/user_recipes
+  def user_recipes
+    @recipes = current_user.recipes.all
+
+    render json: @recipes
   end
 
   # POST /recipes
