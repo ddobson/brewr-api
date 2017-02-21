@@ -63,9 +63,7 @@ class RecipesController < OpenReadController
   def build_recipe_ingredients
     @recipe.recipe_ingredients.each do |recipe_ingredient|
       recipe_ingredient
-        .ingredient = Ingredient.find_or_create_by(name: recipe_ingredient.ingredient.name) do |ingredient|
-          ingredient.unit = recipe_ingredient.ingredient.unit
-        end
+        .ingredient = Ingredient.find_or_create_by(name: recipe_ingredient.ingredient.name, unit: recipe_ingredient.ingredient.unit)
     end
   end
 
