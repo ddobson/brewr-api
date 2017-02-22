@@ -6,11 +6,11 @@ class RecipeIngredientSerializer < ActiveModel::Serializer
   attributes :id, :quantity
 
   attribute :name do
-    object.ingredient.name.capitalize
+    object.ingredient.name.split.map(&:capitalize).join(' ')
   end
 
   attribute :unit do
-    object.ingredient.unit.capitalize
+    object.ingredient.unit
   end
 
   def id
