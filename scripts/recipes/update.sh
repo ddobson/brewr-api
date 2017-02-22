@@ -14,14 +14,14 @@ curl "${API}${URL_PATH}" \
           "quantity": 5.0,
           "ingredient_attributes": {
             "name": "oatmeal",
-            "unit": "ounce"
+            "unit": "oz"
           }
         },
         {
           "quantity": 6.0,
           "ingredient_attributes": {
             "name": "super malt extract",
-            "unit": "ounce"
+            "unit": "oz"
           }
         }
       ],
