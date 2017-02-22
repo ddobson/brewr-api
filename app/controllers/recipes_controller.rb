@@ -1,31 +1,22 @@
 # frozen_string_literal: true
 # :nodoc:
-class RecipesController < OpenReadController
-  before_action :set_recipe, only: [:update, :destroy]
+class RecipesController < ProtectedController
+  before_action :set_recipe, only: [:show, :update, :destroy]
 
   # GET /recipes
   def index
-    @recipes = Recipe.all
+    @recipes = current_user.recipes.all
 
     render json: @recipes
   end
 
   # GET /recipes/:id
   def show
-    @recipe = Recipe.find(params[:id])
-
     if @recipe
       render json: @recipe
     else
       head status: :not_found
     end
-  end
-
-  # GET /recipes/user_recipes
-  def user_recipes
-    @recipes = current_user.recipes.all
-
-    render json: @recipes
   end
 
   # POST /recipes
