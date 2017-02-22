@@ -16,7 +16,7 @@ end
     name: "Amazing #{name}",
     user_id: User.first.id,
     instructions: 'make beer',
-    summary: summary,
+    summary: summary.strip,
     original_gravity: 1.011,
     final_gravity: 1.049,
     abv: 5.2,
@@ -29,9 +29,11 @@ end
   Recipe.create! recipe_params
 end
 
+units = %w(tsb tsp gal oz lbs)
+
 %w(water hops malt grain yeast sugar).each do |ingredient|
   next if Ingredient.find_by(name: ingredient)
-  Ingredient.create(name: ingredient, unit: 'some unit')
+  Ingredient.create(name: ingredient, unit: units.sample)
 end
 
 Recipe.all.each do |recipe|
