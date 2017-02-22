@@ -43,7 +43,13 @@ class RecipesController < OpenReadController
 
   # PATCH/PUT /recipes/:id
   def update
-    if @recipe.update(recipe_params)
+    Recipe.transaction do
+      @recipe.ingredients.destroy_all
+      @recipe.assign_attributes(recipe_params)
+      build_recipe_ingredients
+    end
+
+    if @recipe.save!
       head :no_content
     else
       render json: @recipe.errors, status: :unprocessable_entity
@@ -60,10 +66,16 @@ class RecipesController < OpenReadController
     @recipe = current_user.recipes.find(params[:id])
   end
 
+  # Build ingredients from params and relationships to recipes
   def build_recipe_ingredients
     @recipe.recipe_ingredients.each do |recipe_ingredient|
       recipe_ingredient
-        .ingredient = Ingredient.find_or_create_by(name: recipe_ingredient.ingredient.name, unit: recipe_ingredient.ingredient.unit)
+        .ingredient = Ingredient.find_or_create_by(name: recipe_ingredient
+                                                           .ingredient.name
+                                                           .downcase,
+                                                   unit: recipe_ingredient
+                                                           .ingredient.unit
+                                                           .downcase)
     end
   end
 
@@ -86,5 +98,5 @@ class RecipesController < OpenReadController
                                                   ]])
   end
 
-  private :set_recipe, :recipe_params
+  private :set_recipe, :recipe_params, :build_recipe_ingredients
 end
