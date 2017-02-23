@@ -10,7 +10,7 @@ All recipe resources are protected and require a token.
 ##### Recipes
 
 | Verb | URL Pattern | Controller |
-|--|--|--|--|
+| -- | -- | -- | -- |
 | GET | `/recipes` | `recipes#index` |
 | GET | `/recipes/:id` | `recipes#show` |
 | POST | `/recipes` | `recipes#create` |
@@ -20,7 +20,7 @@ All recipe resources are protected and require a token.
 #### Users
 
 | Verb | URL Pattern | Controller |
-|--|--|--|--|
+| -- | -- | -- | -- |
 | POST   | `/sign-up`             | `users#signup`    |
 | POST   | `/sign-in`             | `users#signin`    |
 | DELETE | `/sign-out/:id`        | `users#signout`   |
