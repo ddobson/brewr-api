@@ -3,13 +3,13 @@
 class RecipeIngredientSerializer < ActiveModel::Serializer
   type :ingredient
 
-  attributes :id, :quantity
+  attributes :id, :quantity, :name, :unit
 
-  attribute :name do
+  def name
     object.ingredient.name.split.map(&:capitalize).join(' ')
   end
 
-  attribute :unit do
+  def unit
     object.ingredient.unit
   end
 
